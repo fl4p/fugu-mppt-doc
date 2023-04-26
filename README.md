@@ -2,9 +2,12 @@
 
 ![Schematics](schematics.png)
 
-# Hardware Notes
+# Safety Notes
 
-- The response of the charger to overcurrent and overvoltage with the original firmware can be slow. Keep this in mind
+The firmware implements a simple observe and perturb MPPT algorithm with constant-current and constant-voltage boundary.
+You can set the current and voltage using the device's buttons and LCD.
+
+- The response of the charger to over-current and over-voltage with the original firmware can be slow. Keep this in mind
   when changing input voltage and battery voltage.
 - Always connect the battery first. Otherwise it might destroy the device (including the ESP32) due to boost behavior of
   the buck converter, which causes excessive voltages at the input terminals. You might want to desolder D8 to avoid any
@@ -15,7 +18,7 @@
 - Avoid fast rising voltages at the input
 - After connecting the power supply it takes a couple of seconds until the charger starts
 
-# Software Notes
+# Other Notes
 
 - The WiFi function with the original firmware is currently defunct
 - You can adjust Settings (Battery Voltage, Current, etc) through the LCD and Buttons
