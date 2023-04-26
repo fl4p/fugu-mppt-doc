@@ -29,7 +29,12 @@ After flashing is complete reset the device, and it should start output logs on 
 Alternatively to the Web Flasher, you can download the firmware code and open it in Arduino IDE. There you can build &
 flash it on the ESP32. See instructions here: https://www.instructables.com/DIY-1kW-MPPT-Solar-Charge-Controller/
 
-# First Test
+# 1. Functional Test
+Equipment:
+- 12V battery (lead or lithium)
+- power supply, 18V, 2A
+
+Steps:
 - Connect a 12V battery (6s lead or 4s LiFePo4) to the Fugu’s battery terminals to power up the device
 - The Device should display the Firmware version
 - You can follow the device log on the serial port through the USB programmer. Baud rate is 115200.
@@ -42,5 +47,6 @@ flash it on the ESP32. See instructions here: https://www.instructables.com/DIY-
   - Exit the menu using the back button
 - Connect a power supply to the Solar Inputs. Set Voltage to 18V and current to 2A
 
+At this point the charger should draw less than 100 mA from the power supply.
 Wait some seconds for the MPPT to initialize.
 The charger should now charge the battery with 2A, drawing between 1.2 - 1.6A current from the power supply.
