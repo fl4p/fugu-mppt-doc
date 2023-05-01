@@ -1,0 +1,26 @@
+{
+  "name": "Fugu MPPT",
+  "version": "2023.4.0",
+  "home_assistant_domain": "esphome",
+  "new_install_skip_erase": false,
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        {
+          "path": "fugu-web-esp32.bin",
+          "offset": 0
+        }
+      ]
+    },
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        {
+          "path": "fugu-web-esp32s3.bin",
+          "offset": 0
+        }
+      ]
+    }
+  ]
+}
