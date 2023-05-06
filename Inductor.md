@@ -1,0 +1,1 @@
+30turns with copper wire, 1.8mm diameter 9 mOhm DC resistance

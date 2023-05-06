@@ -1,6 +1,6 @@
 # Schematics
 
-![Schematics](schematics.png)
+![Schematics](assets/schematics.png)
 
 # Safety Notes
 
