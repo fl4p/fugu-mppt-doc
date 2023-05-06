@@ -1,9 +1,9 @@
 import math
 from time import sleep
 from typing import Iterable, Tuple
-import pandas as pd
 
 import influxdb
+import pandas as pd
 import serial
 
 from ate.util import get_logger
@@ -74,7 +74,7 @@ def fetch_power(monitor_device, window, min_count=10):
     return StatSample(**row)
 
 
-def fetch_power_multi(monitor_devices: Iterable, window, min_count=10) -> Tuple[StatSample,StatSample]:
+def fetch_power_multi(monitor_devices: Iterable, window, min_count=10) -> Tuple[StatSample, StatSample]:
     devices_where = ' OR '.join(map(lambda d: f" device = '{d}' ", monitor_devices))
     q = f"SELECT mean(P),max(P),min(P),stddev(P),count(P), mean(U) as U, mean(I) as I FROM smart_shunt " \
         f"  WHERE time > now() - {window} and ({devices_where}) GROUP BY device"
@@ -142,7 +142,11 @@ def main():
     max_power = 500
     max_duty_cycle = 1024 * 2
 
+    # power_step = 50
+
     duty_cycle = 400
+    measurement_time_seconds = 8
+    expected_samples_per_second = 10
 
     rows = []
 
@@ -150,12 +154,14 @@ def main():
         logger.info('Set duty cycle %d', duty_cycle)
         set_duty_cycle(duty_cycle)
 
-        sleep(4)
+        sleep(2 + measurement_time_seconds)
 
         power_in: StatSample
         power_out: StatSample
 
-        power_in, power_out = fetch_power_multi((power_in_monitor_device, power_out_monitor_device), '2s')
+        power_in, power_out = fetch_power_multi((power_in_monitor_device, power_out_monitor_device),
+                                                window='%.0fms' % (measurement_time_seconds * 1000),
+                                                min_count=expected_samples_per_second * measurement_time_seconds)
 
         if not power_in or not power_out:
             logger.warning('missing power readings')
@@ -200,14 +206,20 @@ def main():
             logger.info('Reached max power')
             break
 
-        duty_cycle += 200
+        if duty_cycle < 950:
+            duty_cycle += 50
+        elif duty_cycle < 975:
+            duty_cycle += 5
+        else:
+            duty_cycle += 1
+
         if duty_cycle > max_duty_cycle:
             break
 
+    set_duty_cycle(200)
+
     df = pd.DataFrame(rows).round(4)
     df.to_csv('power_test.csv')
-
-
 
 
 main()
