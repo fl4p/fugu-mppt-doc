@@ -1,8 +1,9 @@
 import math
 from time import sleep
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, Optional
 
 import influxdb
+import matplotlib.pyplot as plt
 import pandas as pd
 import serial
 
@@ -74,7 +75,8 @@ def fetch_power(monitor_device, window, min_count=10):
     return StatSample(**row)
 
 
-def fetch_power_multi(monitor_devices: Iterable, window, min_count=10) -> Tuple[StatSample, StatSample]:
+def fetch_power_multi(monitor_devices: Iterable, window, min_count=10) \
+        -> Tuple[Optional[StatSample], ...]:
     devices_where = ' OR '.join(map(lambda d: f" device = '{d}' ", monitor_devices))
     q = f"SELECT mean(P),max(P),min(P),stddev(P),count(P), mean(U) as U, mean(I) as I FROM smart_shunt " \
         f"  WHERE time > now() - {window} and ({devices_where}) GROUP BY device"
@@ -82,7 +84,7 @@ def fetch_power_multi(monitor_devices: Iterable, window, min_count=10) -> Tuple[
 
     if not res:
         logger.warning('Empty results for power query')
-        return None
+        return tuple([None] * len(list(monitor_devices)))
 
     ret = []
     for d in monitor_devices:
@@ -97,7 +99,7 @@ def fetch_power_multi(monitor_devices: Iterable, window, min_count=10) -> Tuple[
             continue
         ret.append(StatSample(**row))
 
-    return ret
+    return tuple(ret)
 
 
 def fetch_temp():
@@ -118,6 +120,7 @@ def set_duty_cycle(duty_cycle):
     for _ in range(1, 5):
         l = ser.readline()
         if cmd.strip() in l.strip():
+            logger.info('Set duty cycle %d', duty_cycle)
             return True
         # logger.warning('received data %s', l)
 
@@ -126,7 +129,7 @@ def set_duty_cycle(duty_cycle):
 
 def check_measurement_noise_constraint(p: StatSample, name):
     rpp = p.pp / p.mean
-    if rpp > 0.02:
+    if rpp > 0.03:  # 0.02
         logger.warning('%s %s peak-2-peak too high %.4f', name, p, rpp)
         return False
 
@@ -139,20 +142,27 @@ def check_measurement_noise_constraint(p: StatSample, name):
 
 
 def main():
-    max_power = 500
+    max_power = 700
+    max_temp = 70
+
     max_duty_cycle = 1024 * 2
 
     # power_step = 50
 
     duty_cycle = 400
-    measurement_time_seconds = 8
+    measurement_time_seconds = 16
     expected_samples_per_second = 10
 
     rows = []
 
+    test_name = input('Enter test name:')
+
     while True:
-        logger.info('Set duty cycle %d', duty_cycle)
-        set_duty_cycle(duty_cycle)
+        try:
+            set_duty_cycle(duty_cycle)
+        except Exception as e:
+            logger.warning('Failed to set duty cycle: %s. Retry.', e)
+            continue
 
         sleep(2 + measurement_time_seconds)
 
@@ -164,7 +174,7 @@ def main():
                                                 min_count=expected_samples_per_second * measurement_time_seconds)
 
         if not power_in or not power_out:
-            logger.warning('missing power readings')
+            logger.warning('missing power readings, retry')
             continue
 
         if power_in.mean < 0:
@@ -175,15 +185,13 @@ def main():
                 check_measurement_noise_constraint(power_out, 'out'):
             continue
 
-        # print(power_in)
-        # print(power_out)
-
         temp = fetch_temp()
 
         eff = power_out.mean / power_in.mean
         loss_pct = (power_in.mean - power_out.mean) / power_in.mean
-        logger.info('DS=%4i P_in=%4.1f  Eff = %.2f%%, Loss = %.2f%%,  Temp = %.1f°C', duty_cycle, power_in.mean,
-                    eff * 100, loss_pct * 100, temp)
+        logger.info('DS=%4i P_in=%6.1f  Eff = %.2f%%, Loss = %4.2f%% (%3.1fW), Temp = %.1f°C', duty_cycle,
+                    power_in.mean,
+                    eff * 100, loss_pct * 100, power_in.mean - power_out.mean, temp)
 
         row = dict(
             DS=duty_cycle,
@@ -206,9 +214,13 @@ def main():
             logger.info('Reached max power')
             break
 
+        if temp > max_temp:
+            logger.info('Reached max temp')
+            break
+
         if duty_cycle < 950:
             duty_cycle += 50
-        elif duty_cycle < 975:
+        elif duty_cycle < 975 and power_in.mean < 90:
             duty_cycle += 5
         else:
             duty_cycle += 1
@@ -216,10 +228,24 @@ def main():
         if duty_cycle > max_duty_cycle:
             break
 
-    set_duty_cycle(200)
+
+    try:
+        set_duty_cycle(200)
+    except:
+        pass
 
     df = pd.DataFrame(rows).round(4)
-    df.to_csv('power_test.csv')
+    csv_fn = 'power_test_%s.csv' % test_name
+    df.to_csv(csv_fn)
+    logger.info('Wrote %s', csv_fn)
+
+    s = pd.Series(df.eff.values, index=df.P_out.values)
+    s.plot(marker='.')
+    plt.xlabel('P_in')
+    plt.ylabel('eff')
+    plt.grid(1)
+    plt.title('max eff %.2f%% @ %.1fW' % (s.max()*100, s.index[s.argmax()]))
+    plt.savefig('power_test_%s_eff_curve.png' % test_name)
 
 
 main()

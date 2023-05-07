@@ -20,6 +20,8 @@ Fugu Idle Power: 1.2W
 - SSA-100
 - LiFePo4
 
+![Test Setup](assets/power-test-1/2023-05-04%2016.06.54_anotate.jpg)
+
 # Temperature Considerations
 ![Test](assets/power-test-1/temperature.png)
 
@@ -41,7 +43,7 @@ P_in = 233 W
 Result:
 Loss = 4.3%
 
-![Test](assets/power-test-1/2023-05-04%2016.06.54.jpg)
+
 *The 2 power monitors, shunts and the charger with separated coil.*
 
 ![Test](assets/power-test-1/TR000087.JPG)
@@ -61,7 +63,8 @@ Changed:
 * HS replaced STP150N10F7 (4.2mOhm) with IPP024N08NF2SAKMA1 (2.4mOhm) 
 * Gate Rise Time: 1.5us
 * Gate Fall Time: 0.46us
-
+![Test](assets/power-test-1/test1.1_vg_IPP.png)
+* 
 -> Loss (cold) = 3.17 %  (before: 3.9%)
 -> Loss (hot)  = 3.5 %
 
@@ -71,11 +74,17 @@ Changed:
 # Test 1.4
 double core inductor with 1.6 wire: loss 3.12 %
 
-# Test 1.2.1
-P_in=466
-loss = 3.8
 
 
+# Test Series
 
-![Test](assets/power-test-1/test1.1_vg_IPP.png)
+* V_in=58V
+* V_out= 27V (8s lifepo4)
+* HW configuration same as Test 1.2
+* Various duty cycles.
+
+
+![Test](assets/power-test-1/eff%20over%20P_in.svg)
+*Plot of conversion efficiency over input power*
+
 
