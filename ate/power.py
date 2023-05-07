@@ -1,4 +1,5 @@
 import math
+import os.path
 from time import sleep
 from typing import Iterable, Tuple, Optional
 
@@ -6,6 +7,8 @@ import influxdb
 import matplotlib.pyplot as plt
 import pandas as pd
 import serial
+
+import backoff
 
 from ate.util import get_logger
 
@@ -59,6 +62,7 @@ class StatSample:
         self.I *= -1
 
 
+# noinspection SqlDialectInspection
 def fetch_power(monitor_device, window, min_count=10):
     q = f"SELECT mean(P),max(P),min(P),stddev(P),count(P) FROM smart_shunt " \
         f"  WHERE time > now() - {window} and device = '{monitor_device}'"
@@ -75,6 +79,8 @@ def fetch_power(monitor_device, window, min_count=10):
     return StatSample(**row)
 
 
+# noinspection SqlDialectInspection
+@backoff.on_exception(backoff.expo, Exception, max_time=60 * 4)
 def fetch_power_multi(monitor_devices: Iterable, window, min_count=10) \
         -> Tuple[Optional[StatSample], ...]:
     devices_where = ' OR '.join(map(lambda d: f" device = '{d}' ", monitor_devices))
@@ -90,7 +96,7 @@ def fetch_power_multi(monitor_devices: Iterable, window, min_count=10) \
     for d in monitor_devices:
         row = next(res['smart_shunt', dict(device=d)], None)
         if row is None:
-            logger.warning('Empty results for power query device %d', d)
+            logger.warning('Empty results for power query device %s', d)
             ret.append(None)
             continue
         if not (row['count'] > min_count):
@@ -155,7 +161,16 @@ def main():
 
     rows = []
 
-    test_name = input('Enter test name:')
+    max_eff = 0
+
+    while True:
+        test_name = input('Enter test name:')
+        csv_fn = 'power_test_%s.csv' % test_name
+        if os.path.exists(csv_fn):
+            logger.error('File exists, please choose a different name')
+        else:
+            break
+
 
     while True:
         try:
@@ -164,7 +179,7 @@ def main():
             logger.warning('Failed to set duty cycle: %s. Retry.', e)
             continue
 
-        sleep(2 + measurement_time_seconds)
+        sleep(3 + measurement_time_seconds)
 
         power_in: StatSample
         power_out: StatSample
@@ -189,9 +204,12 @@ def main():
 
         eff = power_out.mean / power_in.mean
         loss_pct = (power_in.mean - power_out.mean) / power_in.mean
-        logger.info('DS=%4i P_in=%6.1f  Eff = %.2f%%, Loss = %4.2f%% (%3.1fW), Temp = %.1f°C', duty_cycle,
+        logger.info('DC=%4i P_in=%6.1f  Eff = %.2f%%, Loss = %4.2f%% (%3.1fW), Temp = %.1f°C', duty_cycle,
                     power_in.mean,
                     eff * 100, loss_pct * 100, power_in.mean - power_out.mean, temp)
+
+        if eff > max_eff:
+            max_eff = eff
 
         row = dict(
             DS=duty_cycle,
@@ -222,20 +240,18 @@ def main():
             duty_cycle += 50
         elif duty_cycle < 975 and power_in.mean < 90:
             duty_cycle += 5
+        elif (eff / max_eff) < 0.995 and power_in.mean > 300:
+            duty_cycle += 5
+        elif (eff / max_eff) < 0.9985 and power_in.mean > 300:
+            duty_cycle += 2
         else:
             duty_cycle += 1
 
         if duty_cycle > max_duty_cycle:
             break
 
-
-    try:
-        set_duty_cycle(200)
-    except:
-        pass
-
     df = pd.DataFrame(rows).round(4)
-    csv_fn = 'power_test_%s.csv' % test_name
+
     df.to_csv(csv_fn)
     logger.info('Wrote %s', csv_fn)
 
@@ -248,7 +264,10 @@ def main():
     plt.savefig('power_test_%s_eff_curve.png' % test_name)
 
 
-main()
+try:
+    main()
+finally:
+    set_duty_cycle(200)
 
 """
 - check temp
