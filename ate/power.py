@@ -1,18 +1,18 @@
 import math
 import os.path
+import signal
 from time import sleep
 from typing import Iterable, Tuple, Optional
 
+import backoff
 import influxdb
 import matplotlib.pyplot as plt
 import pandas as pd
 import serial
 
-import backoff
-
 from ate.util import get_logger
 
-serial_port = '/dev/tty.usbserial-110'
+serial_port = '/dev/tty.usbserial-1130'
 
 influxdb_client = influxdb.InfluxDBClient(
     host='homeassistant.local',
@@ -24,7 +24,10 @@ influxdb_client = influxdb.InfluxDBClient(
 power_in_monitor_device = 'ESP32_ADS'
 power_out_monitor_device = 'ESP32_INA226'
 temp_query = "SELECT mean(mcu_temp) as temp FROM mppt " \
-             "  WHERE time > now() - 20s and device = 'esp32_proto_mppt_esp32s3-70408218853'"
+             "  WHERE time > now() - 20s and device = 'fugu_esp32s3-344082188534'"
+
+ntc_temp_query = "SELECT mean(ntc_temp) as temp FROM mppt " \
+                 "  WHERE time > now() - 20s and device = 'fugu_esp32s3-344082188534'"
 
 logger = get_logger()
 
@@ -108,8 +111,11 @@ def fetch_power_multi(monitor_devices: Iterable, window, min_count=10) \
     return tuple(ret)
 
 
-def fetch_temp():
-    res = influxdb_client.query(temp_query)
+def fetch_temp(q):
+    res = influxdb_client.query(q)
+    if not res:
+        logger.warning('Temperature not available!')
+        return math.nan
     return next(res[res.keys()[0]], dict(temp=math.nan))['temp']
 
 
@@ -135,33 +141,39 @@ def set_duty_cycle(duty_cycle):
 
 def check_measurement_noise_constraint(p: StatSample, name):
     rpp = p.pp / p.mean
-    if rpp > 0.03:  # 0.02
+    if rpp > 0.03:  # 0.02, 0.04
         logger.warning('%s %s peak-2-peak too high %.4f', name, p, rpp)
         return False
 
     rstd = p.stddev / p.mean
-    if rstd > 0.005:
+    if rstd > 0.005:  # 0.007
         logger.warning('%s %s stddev too high %.4f', name, p, rstd)
         return False
 
     return True
 
 
+cancelled = False
+
+
 def main():
-    max_power = 700
-    max_temp = 70
+    max_power = 950
+    max_mcu_temp = 70
+    max_ntc_temp = 85
+    max_loss = 75
 
     max_duty_cycle = 1024 * 2
 
     # power_step = 50
 
-    duty_cycle = 400
-    measurement_time_seconds = 16
+    duty_cycle = 500
+    measurement_time_seconds = 8  # 16
     expected_samples_per_second = 10
 
     rows = []
 
     max_eff = 0
+    prev_power_out = 0
 
     while True:
         test_name = input('Enter test name:')
@@ -171,14 +183,15 @@ def main():
         else:
             break
 
-
-    while True:
+    while not cancelled:
         try:
             set_duty_cycle(duty_cycle)
         except Exception as e:
             logger.warning('Failed to set duty cycle: %s. Retry.', e)
+            sleep(2)
             continue
 
+        # skip first 3 seconds settling time (e.g. LS duty cycle fade-in)
         sleep(3 + measurement_time_seconds)
 
         power_in: StatSample
@@ -200,13 +213,24 @@ def main():
                 check_measurement_noise_constraint(power_out, 'out'):
             continue
 
-        temp = fetch_temp()
+        if power_out.mean < prev_power_out - 1:
+            logger.error('Power(out) not monotonic increasing (prev %.1W, now %.1W)')
+            logger.error('Power supply current limited or diode emulation failure?', prev_power_out, power_out.mean)
+            continue
+            
+        prev_power_out = power_out.mean
+
+        mcu_temp = fetch_temp(temp_query)
+        ntc_temp = fetch_temp(ntc_temp_query)
 
         eff = power_out.mean / power_in.mean
+        loss = power_in.mean - power_out.mean
         loss_pct = (power_in.mean - power_out.mean) / power_in.mean
-        logger.info('DC=%4i P_in=%6.1f  Eff = %.2f%%, Loss = %4.2f%% (%3.1fW), Temp = %.1f°C', duty_cycle,
+
+        logger.info('DC=%4i P_in=%6.1f  Eff = %.2f%%, Loss = %4.2f%% (%3.1fW), Temp(MCU/NTC)= %.1f°C / %.1f°C',
+                    duty_cycle,
                     power_in.mean,
-                    eff * 100, loss_pct * 100, power_in.mean - power_out.mean, temp)
+                    eff * 100, loss_pct * 100, loss, mcu_temp, ntc_temp)
 
         if eff > max_eff:
             max_eff = eff
@@ -223,7 +247,8 @@ def main():
             P_out=power_out.mean,
 
             eff=eff,
-            temp=temp,
+            temp=mcu_temp,
+            ntc_temp=ntc_temp,
         )
 
         rows.append(row)
@@ -232,14 +257,24 @@ def main():
             logger.info('Reached max power')
             break
 
-        if temp > max_temp:
-            logger.info('Reached max temp')
+        if mcu_temp > max_mcu_temp:
+            logger.info('Reached max mcu temp')
             break
 
-        if duty_cycle < 950:
+        if ntc_temp > max_ntc_temp:
+            logger.info('Reached max ntc temp')
+            break
+
+        if loss > max_loss:
+            logger.info('Reached max loss')
+            break
+
+        if duty_cycle < 900:
             duty_cycle += 50
         elif duty_cycle < 975 and power_in.mean < 90:
             duty_cycle += 5
+        # elif (eff / max_eff) < 0.995 and power_in.mean > 600:
+        #    duty_cycle += 10
         elif (eff / max_eff) < 0.995 and power_in.mean > 300:
             duty_cycle += 5
         elif (eff / max_eff) < 0.9985 and power_in.mean > 300:
@@ -250,19 +285,29 @@ def main():
         if duty_cycle > max_duty_cycle:
             break
 
-    df = pd.DataFrame(rows).round(4)
+    if len(rows) > 1:
+        df = pd.DataFrame(rows).round(4)
 
-    df.to_csv(csv_fn)
-    logger.info('Wrote %s', csv_fn)
+        df.to_csv(csv_fn)
+        logger.info('Wrote %s', csv_fn)
 
-    s = pd.Series(df.eff.values, index=df.P_out.values)
-    s.plot(marker='.')
-    plt.xlabel('P_in')
-    plt.ylabel('eff')
-    plt.grid(1)
-    plt.title('max eff %.2f%% @ %.1fW' % (s.max()*100, s.index[s.argmax()]))
-    plt.savefig('power_test_%s_eff_curve.png' % test_name)
+        s = pd.Series(df.eff.values, index=df.P_out.values)
+        s.plot(marker='.')
+        plt.xlabel('P_in')
+        plt.ylabel('eff')
+        plt.grid(1)
+        plt.title('max eff %.2f%% @ %.1fW' % (s.max() * 100, s.index[s.argmax()]))
+        plt.savefig('power_test_%s_eff_curve.png' % test_name)
 
+
+def signal_handler(sig, frame):
+    global cancelled
+    logger.info('You pressed Ctrl+C!')
+    cancelled = True
+
+
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
 
 try:
     main()
