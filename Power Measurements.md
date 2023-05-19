@@ -74,6 +74,11 @@ Changed:
 # Test 1.4
 double core inductor with 1.6 wire: loss 3.12 %
 
+# Test 1.5
+HS FET: IPP024N08NF2SAKMA1->TK6R8A08QM (5.6mOhm, BUT much faster)
+- 780ns Gate Rise Time
+- Loss: 3.12 % -> 2.79%
+- Switching losses are more important than conduction losses
 
 
 # Test Series

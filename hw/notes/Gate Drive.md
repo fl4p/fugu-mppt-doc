@@ -24,8 +24,14 @@ These are hard to find in stock:
 * 2ED2183S06F (650V,2.5A,600ns,400ns dead-time, HIN/*LIN)
 * 2ED2184S06F (650V,2.5A,600ns,400ns dead-time, IN/*SD, $2.2)
 
+
+Microchip
+- MIC4605-1YM
+- MIC4605-1YMT (with EN pin)
+
 China:
 * TF2184M(600V,1.4A,200ns,400ns dead-time,IN/SD*)
+
 
 
 * IRS21867S (600V,4A,independent,$1.4,discontinued)

@@ -53,3 +53,8 @@ Steps:
 At this point the charger should draw less than 100 mA from the power supply.
 Wait some seconds for the MPPT to initialize.
 The charger should now charge the battery with 2A, drawing between 1.2 - 1.6A current from the power supply.
+
+
+# TODO
+- Serial output sample
+- HW debug docs

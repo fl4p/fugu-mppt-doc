@@ -4,7 +4,7 @@ https://fscdn.rohm.com/en/products/databook/applinote/ic/power/switching_regulat
 import math
 
 f_r = 20e6  # ringing freq
-C_p0 = 22e-9  # half-freq cap (see PDF)
+C_p0 = 3.8e-9  # half-freq cap (see PDF)
 V_in = 58
 f_sw = 39_000
 
