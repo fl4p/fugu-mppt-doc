@@ -1,0 +1,4 @@
+build
+sdkconfig
+cmake-build-*
+.idea
