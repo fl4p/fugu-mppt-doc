@@ -6,3 +6,5 @@ ate/__pycache__/
 ate/results/*.csv
 ate/results/*.png
 
+
+*.bin
