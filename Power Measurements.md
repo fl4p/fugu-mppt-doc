@@ -1,7 +1,6 @@
 # Measurments Equipment
 
-I use to power monitors on bread board.
-Both monitors are single-point calibrated with Keithley DMM6500.
+I used to power monitors, both single-point calibrated with Keithley DMM6500.
 
 A cooling Fan is important. Semiconductors lose conductivity with increasing temperature.
 For consistent test results, temperatures must stay constant.
@@ -21,18 +20,25 @@ Fugu Idle Power: 1.2W
 - LiFePo4
 
 ![Test Setup](assets/power-test-1/2023-05-04%2016.06.54_anotate.jpg)
+*The 2 power monitors, shunts and the charger with coil.*
 
 # Temperature Considerations
 ![Test](assets/power-test-1/temperature.png)
+* green: input power (solar)
+* yellow: output power (bat)
+* orange: rel. loss
 
 
-# Test 1
-Source: Power supply 58V, 4A
-Battery: 8s LiFePo4
+# Test 1.0
 
-V_in = 58V
-V_out = 27V
-I_in = 4090 mA
+I did a few tests using various HW configuration (gate drive resistor, mosfets, coils, caps).
+
+* Source: Power supply 58V, 4A
+* Battery: 8s LiFePo4
+
+V_in = 58V,
+V_out = 27V,
+I_in = 4090 mA,
 P_in = 233 W
 
 - Gate Driver: IR2104, 100ohm
@@ -40,19 +46,19 @@ P_in = 233 W
 - Gate Rise Time: LS: 2.99us, HS: 3.49us
 - Coil 1.6mm copper wire (16AWG) with 10cm connection cable 
 
-Result:
-Loss = 4.3%
+-> Loss = 4.3%
 
-
-*The 2 power monitors, shunts and the charger with separated coil.*
 
 ![Test](assets/power-test-1/TR000087.JPG)
+
 *Thermal image of the PCB and the coil. The lustre terminal at the coil was not properly connected producing a lot of heat (85°C)*
 
 ![Test](assets/power-test-1/TR000088.JPG)
 
+*Board close-up*
+
 # Test 1.1
-Changed:
+Same as Test 1.0 but changed:
 * HS Gate Drive resistor 100 -> 47ohm
 * Rise Time 3.39us -> 2.46us
 
@@ -69,10 +75,10 @@ Changed:
 -> Loss (hot)  = 3.5 %
 
 # Test 1.3
-* 1.8 inductor wire: loss 3.13%
+* 1.8mm inductor wire: loss 3.13%
 
 # Test 1.4
-double core inductor with 1.6 wire: loss 3.12 %
+double core inductor with 1.6mm wire: loss 3.12 %
 
 # Test 1.5
 HS FET: IPP024N08NF2SAKMA1->TK6R8A08QM (5.6mOhm, BUT much faster)
@@ -93,3 +99,19 @@ HS FET: IPP024N08NF2SAKMA1->TK6R8A08QM (5.6mOhm, BUT much faster)
 *Plot of conversion efficiency over input power*
 
 
+
+
+# Findings
+
+- Reducing HS gate resistor from 100 to 47 or 22 increases eff (also ringing/EMI!)
+- The TK6R8 (HS) has lower loss than the IPP at lower power levels
+- 10cm Wires to the coil can affect eff significantly
+- A double core coil is more efficient, especially at higher power
+- Using 1.4mm instead of 1.6mm coil wire reduces efficiency at all power levels 
+
+![Test](assets/power-test-1/dcdc-configs-eff.svg)
+```
+* blue:   L(29.5T,1.6Wire,1core) HS(TK6R8)
+* orange: L(  20T,1.8Wire,2core) HS(IPP  ) 
+* gree:   L(  20T,1.8Wire,2core) HS(Tk6R8  ) 
+``` 

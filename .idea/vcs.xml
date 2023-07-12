@@ -2,5 +2,9 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/tools/demo_esp_littlefs" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/tools/lcd-hd44780-hello-world" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/tools/lcd-hd44780-hello-world/components/Arduino-LiquidCrystal-I2C/Arduino-LiquidCrystal-I2C-library" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/tools/tools/lcd-hd44780-hello-world" vcs="Git" />
   </component>
 </project>

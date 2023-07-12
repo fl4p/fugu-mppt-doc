@@ -1,3 +1,8 @@
+
+This repository contains resources I used and/or created while developing an MPPT charge controller.
+* `/ate` (automated test equipment) contains python scripts for efficiency measurements using [smart-shunt](https://github.com/open-pe/smart-shunt-fw)
+* `/tools` ESP32 testing sketches and programs
+
 # Schematics
 
 ![Schematics](assets/schematics.png)
@@ -30,7 +35,7 @@ https://open.pe/fugu-web-flasher/
 After flashing is complete reset the device, and it should start output logs on the serial port (at 115200 baud)
 
 Alternatively to the Web Flasher, you can download the firmware code and open it in Arduino IDE. There you can build &
-flash it on the ESP32. See instructions here: https://www.instructables.com/DIY-1kW-MPPT-Solar-Charge-Controller/
+flash it on the ESP32. See [instructions here]( https://www.instructables.com/DIY-1kW-MPPT-Solar-Charge-Controller/).
 
 # 1. Functional Test
 Equipment:

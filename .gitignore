@@ -8,3 +8,7 @@ ate/results/*.png
 
 
 *.bin
+
+
+build/
+cmake-build-*
