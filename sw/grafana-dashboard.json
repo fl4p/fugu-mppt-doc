@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 7,
+  "id": 9,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -52,7 +52,193 @@
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "linear",
+            "lineInterpolation": "stepAfter",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "mppt.P {device: fugu_esp32s3-344082188534}",
+                  "mppt.P_filt {device: fugu_esp32s3-344082188534}"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "stdDev"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "yevv2Ga4z"
+          },
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "key": "Q-0f945055-b743-43e6-8b44-0bf4874562ea-0",
+          "measurement": "mppt",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"P\") as P, mean(\"P_prev\") as P_prev, mean(\"P_raw\") as P_raw, mean(\"P_filt\") as P_filt FROM \"mppt\" WHERE $timeFilter GROUP BY time($__interval), device fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "P"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "P_prev"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "P_raw"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "device",
+              "operator": "=",
+              "value": "esp32_proto_mppt"
+            }
+          ]
+        }
+      ],
+      "title": "P",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "yevv2Ga4z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "stepAfter",
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
@@ -89,12 +275,14 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 9
       },
       "id": 3,
       "options": {
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "stdDev"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -158,7 +346,7 @@
             [
               {
                 "params": [
-                  "U_raw"
+                  "U_in_raw"
                 ],
                 "type": "field"
               },
@@ -204,7 +392,7 @@
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "linear",
+            "lineInterpolation": "stepAfter",
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
@@ -235,13 +423,38 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "mppt.U_out_raw {device: fugu_esp32s3-344082188534}"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 15
       },
       "id": 7,
       "options": {
@@ -356,7 +569,7 @@
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "linear",
+            "lineInterpolation": "stepAfter",
             "lineStyle": {
               "fill": "solid"
             },
@@ -396,7 +609,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 21
       },
       "id": 1,
       "options": {
@@ -549,15 +762,40 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "mppt.E {device: fugu_esp32s3-344082188534}"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 28
       },
-      "id": 2,
+      "id": 14,
       "options": {
         "legend": {
           "calcs": [
@@ -597,7 +835,7 @@
           "measurement": "mppt",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"P\") as P, mean(\"P_prev\") as P_prev, mean(\"P_raw\") as P_raw FROM \"mppt\" WHERE $timeFilter GROUP BY time($__interval), device fill(null)",
+          "query": "SELECT mean(\"E\") as E , mean(\"E_today\") as E_today FROM \"mppt\" WHERE $timeFilter GROUP BY time($__interval), device fill(null)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -648,7 +886,7 @@
           ]
         }
       ],
-      "title": "P",
+      "title": "energy",
       "type": "timeseries"
     },
     {
@@ -712,7 +950,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 37
       },
       "id": 4,
       "options": {
@@ -848,7 +1086,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 46
       },
       "id": 6,
       "options": {
@@ -1002,7 +1240,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 51
       },
       "id": 5,
       "options": {
@@ -1144,39 +1382,13 @@
         "overrides": [
           {
             "matcher": {
-              "id": "byName",
-              "options": "mppt.duty {device: esp32_proto_mppt_esp32s3-70408218853, mcu: esp32s3-70408218853}"
+              "id": "byRegexp",
+              "options": "/.duty/"
             },
             "properties": [
               {
                 "id": "custom.axisPlacement",
                 "value": "right"
-              }
-            ]
-          },
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "mppt.duty {device: esp32_proto_mppt_esp32s3-70408218853, mcu: esp32s3-70408218853}",
-                  "mppt.P_prev {device: esp32_proto_mppt_esp32s3-70408218853}",
-                  "mppt.P {device: esp32_proto_mppt_esp32s3-70408218853}"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
               }
             ]
           }
@@ -1186,7 +1398,7 @@
         "h": 13,
         "w": 24,
         "x": 0,
-        "y": 47
+        "y": 56
       },
       "id": 9,
       "options": {
@@ -1225,7 +1437,7 @@
           "measurement": "mppt",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"P\") as P, mean(\"P_prev\") as P_prev, mean(\"P_raw\") as P_raw FROM \"mppt\" WHERE $timeFilter GROUP BY time($__interval), device fill(null)",
+          "query": "SELECT mean(\"P\") as P, mean(\"P_prev\") as P_prev, mean(\"P_raw\") as P_raw , mean(\"P_filt\") as P_filt FROM \"mppt\" WHERE $timeFilter GROUP BY time($__interval), device fill(null)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -1344,6 +1556,534 @@
         "type": "influxdb",
         "uid": "yevv2Ga4z"
       },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 69
+      },
+      "id": 15,
+      "options": {
+        "ReferenceLines": [],
+        "border": {
+          "color": "yellow",
+          "size": 0
+        },
+        "fieldSets": [
+          {
+            "col": 1,
+            "color": "#b5952f",
+            "colorCol": -1,
+            "dotSize": 2,
+            "hidden": false,
+            "lineSize": 1,
+            "lineType": "none",
+            "polynomialOrder": 3,
+            "sizeCol": -1
+          }
+        ],
+        "grid": {
+          "color": "gray"
+        },
+        "label": {
+          "col": -1,
+          "color": "#CCC",
+          "textSize": 2
+        },
+        "legend": {
+          "show": false,
+          "size": 3
+        },
+        "xAxis": {
+          "col": 2,
+          "inverted": false
+        },
+        "xAxisExtents": {
+          "min": null,
+          "max": null
+        },
+        "xAxisTitle": {
+          "text": "Time",
+          "color": "white",
+          "textSize": 2,
+          "rotated": false,
+          "logScale": false,
+          "fontSize": 4,
+          "fontColor": "white"
+        },
+        "xMargins": {
+          "lower": 30,
+          "upper": 10
+        },
+        "yAxisExtents": {
+          "min": null,
+          "max": null
+        },
+        "yAxisTitle": {
+          "text": "Psd",
+          "color": "#777",
+          "textSize": 2,
+          "rotated": false,
+          "logScale": false,
+          "fontSize": 4,
+          "fontColor": "white"
+        },
+        "yMargins": {
+          "lower": -10,
+          "upper": 20
+        }
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "yevv2Ga4z"
+          },
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "mppt",
+          "orderByTime": "ASC",
+          "policy": "autogen",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "P"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "v1"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "pwm_duty"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "v2"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "U_in"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "v3"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "title": "P/dutyCycle scatter",
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {}
+        }
+      ],
+      "type": "michaeldmoore-scatter-panel"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "yevv2Ga4z"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 69
+      },
+      "id": 16,
+      "options": {
+        "ReferenceLines": [],
+        "border": {
+          "color": "yellow",
+          "size": 0
+        },
+        "fieldSets": [
+          {
+            "col": 3,
+            "color": "#b5952f",
+            "colorCol": -1,
+            "dotSize": 2,
+            "hidden": false,
+            "lineSize": 1,
+            "lineType": "none",
+            "polynomialOrder": 3,
+            "sizeCol": -1
+          }
+        ],
+        "grid": {
+          "color": "gray"
+        },
+        "label": {
+          "col": -1,
+          "color": "#CCC",
+          "textSize": 2
+        },
+        "legend": {
+          "show": false,
+          "size": 3
+        },
+        "xAxis": {
+          "col": 2,
+          "inverted": false
+        },
+        "xAxisExtents": {
+          "min": null,
+          "max": null
+        },
+        "xAxisTitle": {
+          "text": "Time",
+          "color": "white",
+          "textSize": 2,
+          "rotated": false,
+          "logScale": false,
+          "fontSize": 4,
+          "fontColor": "white"
+        },
+        "xMargins": {
+          "lower": 30,
+          "upper": 10
+        },
+        "yAxisExtents": {
+          "min": null,
+          "max": null
+        },
+        "yAxisTitle": {
+          "text": "Psd",
+          "color": "#777",
+          "textSize": 2,
+          "rotated": false,
+          "logScale": false,
+          "fontSize": 4,
+          "fontColor": "white"
+        },
+        "yMargins": {
+          "lower": -10,
+          "upper": 20
+        }
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "yevv2Ga4z"
+          },
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "mppt",
+          "orderByTime": "ASC",
+          "policy": "autogen",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "P"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "v1"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "pwm_duty"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "v2"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "U_in_raw"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "v3"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "title": "Panel Title",
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {}
+        }
+      ],
+      "type": "michaeldmoore-scatter-panel"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "yevv2Ga4z"
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 22,
+        "x": 1,
+        "y": 78
+      },
+      "id": 17,
+      "options": {
+        "ReferenceLines": [],
+        "border": {
+          "color": "yellow",
+          "size": 0
+        },
+        "fieldSets": [
+          {
+            "col": 1,
+            "color": "#b5952f",
+            "colorCol": -1,
+            "dotSize": 2,
+            "hidden": false,
+            "lineSize": 1,
+            "lineType": "none",
+            "polynomialOrder": 3,
+            "sizeCol": -1
+          }
+        ],
+        "grid": {
+          "color": "gray"
+        },
+        "label": {
+          "col": -1,
+          "color": "#CCC",
+          "textSize": 2
+        },
+        "legend": {
+          "show": false,
+          "size": 3
+        },
+        "xAxis": {
+          "col": 2,
+          "inverted": false
+        },
+        "xAxisExtents": {
+          "min": null,
+          "max": null
+        },
+        "xAxisTitle": {
+          "text": "Time",
+          "color": "white",
+          "textSize": 2,
+          "rotated": false,
+          "logScale": false,
+          "fontSize": 4,
+          "fontColor": "white"
+        },
+        "xMargins": {
+          "lower": 30,
+          "upper": 10
+        },
+        "yAxisExtents": {
+          "min": null,
+          "max": null
+        },
+        "yAxisTitle": {
+          "text": "Psd",
+          "color": "#777",
+          "textSize": 2,
+          "rotated": false,
+          "logScale": false,
+          "fontSize": 4,
+          "fontColor": "white"
+        },
+        "yMargins": {
+          "lower": -10,
+          "upper": 20
+        }
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "yevv2Ga4z"
+          },
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "mppt",
+          "orderByTime": "ASC",
+          "policy": "autogen",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "P_filt"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "v1"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "pwm_duty"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "v2"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "U_in"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "v3"
+                ],
+                "type": "alias"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "title": "P_filt/dutyCycle scatter",
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {}
+        }
+      ],
+      "type": "michaeldmoore-scatter-panel"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "yevv2Ga4z"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1400,7 +2140,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 60
+        "y": 88
       },
       "id": 10,
       "options": {
@@ -1459,7 +2199,7 @@
               },
               {
                 "params": [],
-                "type": "mean"
+                "type": "min"
               }
             ]
           ],
@@ -1467,6 +2207,136 @@
         }
       ],
       "title": "state",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "yevv2Ga4z"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 17,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": 30000,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 93
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "yevv2Ga4z"
+          },
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "device"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "key": "Q-0f945055-b743-43e6-8b44-0bf4874562ea-0",
+          "measurement": "mppt",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT mean(\"I\") as I, mean(\"U\") as U, mean(\"P\") as P FROM \"mppt\" WHERE (\"device\" = 'esp32_proto_mppt') AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "cv_lim_idx"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "min"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "title": "cv_lim_idx",
       "type": "timeseries"
     },
     {
@@ -1530,7 +2400,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 65
+        "y": 98
       },
       "id": 11,
       "options": {
@@ -1602,7 +2472,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "tyxZfLLVk"
+        "uid": "yevv2Ga4z"
       },
       "fieldConfig": {
         "defaults": {
@@ -1660,7 +2530,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 70
+        "y": 103
       },
       "id": 8,
       "options": {
@@ -1679,7 +2549,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "tyxZfLLVk"
+            "uid": "yevv2Ga4z"
           },
           "groupBy": [
             {
@@ -1687,6 +2557,12 @@
                 "$__interval"
               ],
               "type": "time"
+            },
+            {
+              "params": [
+                "device::tag"
+              ],
+              "type": "tag"
             },
             {
               "params": [
@@ -1713,17 +2589,29 @@
               },
               {
                 "params": [],
-                "type": "mean"
+                "type": "last"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "pwm_ls_max"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "max"
+              },
+              {
+                "params": [
+                  "pwm_ls_max"
+                ],
+                "type": "alias"
               }
             ]
           ],
-          "tags": [
-            {
-              "key": "device",
-              "operator": "=",
-              "value": "esp32_proto_mppt"
-            }
-          ]
+          "tags": []
         }
       ],
       "title": "LS PWM duty cycle",
@@ -1774,8 +2662,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1784,18 +2671,45 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "mppt.ntc {device: fugu_esp32s3-344082188534}"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 5,
+        "h": 14,
         "w": 24,
         "x": 0,
-        "y": 79
+        "y": 112
       },
       "id": 12,
       "options": {
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "mean"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -1850,6 +2764,30 @@
               {
                 "params": [],
                 "type": "mean"
+              },
+              {
+                "params": [
+                  "mcu"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "ntc_temp"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "ntc"
+                ],
+                "type": "alias"
               }
             ]
           ],
@@ -1860,7 +2798,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "5s",
+  "refresh": "30s",
   "revision": 1,
   "schemaVersion": 38,
   "style": "dark",
@@ -1869,13 +2807,13 @@
     "list": []
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Fugu Mppt",
-  "uid": "CsdSfLY4k",
-  "version": 19,
+  "uid": "f4a22deb-8528-427d-9473-4e7b06c6d874",
+  "version": 44,
   "weekStart": ""
 }
