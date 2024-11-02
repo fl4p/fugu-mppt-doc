@@ -24,14 +24,14 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 9,
+  "id": 10,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "fieldConfig": {
         "defaults": {
@@ -86,33 +86,7 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "mppt.P {device: fugu_esp32s3-344082188534}",
-                  "mppt.P_filt {device: fugu_esp32s3-344082188534}"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 9,
@@ -140,7 +114,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -217,7 +191,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "fieldConfig": {
         "defaults": {
@@ -296,7 +270,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -371,7 +345,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "fieldConfig": {
         "defaults": {
@@ -423,32 +397,7 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "mppt.U_out_raw {device: fugu_esp32s3-344082188534}"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 6,
@@ -473,7 +422,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -548,7 +497,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "fieldConfig": {
         "defaults": {
@@ -632,7 +581,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -696,6 +645,24 @@
                 ],
                 "type": "alias"
               }
+            ],
+            [
+              {
+                "params": [
+                  "Io"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              },
+              {
+                "params": [
+                  "I_out_raw"
+                ],
+                "type": "alias"
+              }
             ]
           ],
           "tags": []
@@ -707,7 +674,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "fieldConfig": {
         "defaults": {
@@ -762,32 +729,7 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "mppt.E {device: fugu_esp32s3-344082188534}"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 9,
@@ -815,7 +757,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -892,7 +834,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "fieldConfig": {
         "defaults": {
@@ -944,7 +886,32 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "mppt.mean {device: fugu_esp32s3-4082188534}"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 9,
@@ -969,7 +936,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -1022,7 +989,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "fieldConfig": {
         "defaults": {
@@ -1105,7 +1072,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -1182,7 +1149,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "fieldConfig": {
         "defaults": {
@@ -1259,7 +1226,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -1324,7 +1291,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "fieldConfig": {
         "defaults": {
@@ -1417,7 +1384,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -1490,7 +1457,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -1554,7 +1521,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "gridPos": {
         "h": 9,
@@ -1598,35 +1565,29 @@
           "col": 2,
           "inverted": false
         },
-        "xAxisExtents": {
-          "min": null,
-          "max": null
-        },
+        "xAxisExtents": {},
         "xAxisTitle": {
-          "text": "Time",
           "color": "white",
-          "textSize": 2,
-          "rotated": false,
-          "logScale": false,
+          "fontColor": "white",
           "fontSize": 4,
-          "fontColor": "white"
+          "logScale": false,
+          "rotated": false,
+          "text": "Time",
+          "textSize": 2
         },
         "xMargins": {
           "lower": 30,
           "upper": 10
         },
-        "yAxisExtents": {
-          "min": null,
-          "max": null
-        },
+        "yAxisExtents": {},
         "yAxisTitle": {
-          "text": "Psd",
           "color": "#777",
-          "textSize": 2,
-          "rotated": false,
-          "logScale": false,
+          "fontColor": "white",
           "fontSize": 4,
-          "fontColor": "white"
+          "logScale": false,
+          "rotated": false,
+          "text": "Psd",
+          "textSize": 2
         },
         "yMargins": {
           "lower": -10,
@@ -1638,7 +1599,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -1730,7 +1691,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "gridPos": {
         "h": 9,
@@ -1774,35 +1735,29 @@
           "col": 2,
           "inverted": false
         },
-        "xAxisExtents": {
-          "min": null,
-          "max": null
-        },
+        "xAxisExtents": {},
         "xAxisTitle": {
-          "text": "Time",
           "color": "white",
-          "textSize": 2,
-          "rotated": false,
-          "logScale": false,
+          "fontColor": "white",
           "fontSize": 4,
-          "fontColor": "white"
+          "logScale": false,
+          "rotated": false,
+          "text": "Time",
+          "textSize": 2
         },
         "xMargins": {
           "lower": 30,
           "upper": 10
         },
-        "yAxisExtents": {
-          "min": null,
-          "max": null
-        },
+        "yAxisExtents": {},
         "yAxisTitle": {
-          "text": "Psd",
           "color": "#777",
-          "textSize": 2,
-          "rotated": false,
-          "logScale": false,
+          "fontColor": "white",
           "fontSize": 4,
-          "fontColor": "white"
+          "logScale": false,
+          "rotated": false,
+          "text": "Psd",
+          "textSize": 2
         },
         "yMargins": {
           "lower": -10,
@@ -1814,7 +1769,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -1906,7 +1861,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "gridPos": {
         "h": 10,
@@ -1950,35 +1905,29 @@
           "col": 2,
           "inverted": false
         },
-        "xAxisExtents": {
-          "min": null,
-          "max": null
-        },
+        "xAxisExtents": {},
         "xAxisTitle": {
-          "text": "Time",
           "color": "white",
-          "textSize": 2,
-          "rotated": false,
-          "logScale": false,
+          "fontColor": "white",
           "fontSize": 4,
-          "fontColor": "white"
+          "logScale": false,
+          "rotated": false,
+          "text": "Time",
+          "textSize": 2
         },
         "xMargins": {
           "lower": 30,
           "upper": 10
         },
-        "yAxisExtents": {
-          "min": null,
-          "max": null
-        },
+        "yAxisExtents": {},
         "yAxisTitle": {
-          "text": "Psd",
           "color": "#777",
-          "textSize": 2,
-          "rotated": false,
-          "logScale": false,
+          "fontColor": "white",
           "fontSize": 4,
-          "fontColor": "white"
+          "logScale": false,
+          "rotated": false,
+          "text": "Psd",
+          "textSize": 2
         },
         "yMargins": {
           "lower": -10,
@@ -1990,7 +1939,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -2082,7 +2031,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "fieldConfig": {
         "defaults": {
@@ -2159,7 +2108,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -2212,7 +2161,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "fieldConfig": {
         "defaults": {
@@ -2289,7 +2238,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -2342,7 +2291,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "fieldConfig": {
         "defaults": {
@@ -2384,8 +2333,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2419,7 +2367,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -2472,7 +2420,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "fieldConfig": {
         "defaults": {
@@ -2514,8 +2462,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2549,7 +2496,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -2620,7 +2567,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "yevv2Ga4z"
+        "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
       },
       "fieldConfig": {
         "defaults": {
@@ -2723,7 +2670,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "yevv2Ga4z"
+            "uid": "badbfa4d-4373-44b0-a5ab-14fe8f384c98"
           },
           "groupBy": [
             {
@@ -2798,7 +2745,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "30s",
+  "refresh": false,
   "revision": 1,
   "schemaVersion": 38,
   "style": "dark",
@@ -2807,13 +2754,13 @@
     "list": []
   },
   "time": {
-    "from": "now-5m",
-    "to": "now"
+    "from": "2023-08-19T18:24:15.015Z",
+    "to": "2023-08-19T18:24:20.126Z"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Fugu Mppt",
   "uid": "f4a22deb-8528-427d-9473-4e7b06c6d874",
-  "version": 44,
+  "version": 3,
   "weekStart": ""
 }

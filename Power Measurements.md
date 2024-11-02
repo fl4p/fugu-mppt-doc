@@ -1,4 +1,4 @@
-# Measurments Equipment
+# Measurement Equipment
 
 I used to power monitors, both single-point calibrated with Keithley DMM6500.
 
@@ -21,6 +21,11 @@ Fugu Idle Power: 1.2W
 
 ![Test Setup](assets/power-test-1/2023-05-04%2016.06.54_anotate.jpg)
 *The 2 power monitors, shunts and the charger with coil.*
+
+
+
+![Coils](assets/coils.jpg)
+*Coils used in the tests below*
 
 # Temperature Considerations
 ![Test](assets/power-test-1/temperature.png)
